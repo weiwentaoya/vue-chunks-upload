@@ -1,4 +1,4 @@
-this.importScripts('spark-md5.min.js')
+this.importScripts('https://cdn.bootcdn.net/ajax/libs/spark-md5/3.0.0/spark-md5.min.js')
 this.onmessage= e => {
     const {chunks} = e.data
     const spark = new this.SparkMD5.ArrayBuffer();
@@ -14,9 +14,6 @@ this.onmessage= e => {
                     hash:spark.end()
                 })
             }else{
-                // this.postMessage({
-                //     index
-                // })
                 loadNext(count)
             }
         }

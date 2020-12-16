@@ -1,16 +1,3 @@
-<template>
-    <div class="upload_content" @click="$refs.fileRef.click()">
-        <input type="file" ref="fileRef" class="upload_file" @change="handleFileChange">
-        <div class="dragger" v-if="drag" ref="dragRef">
-            <img class="upload_icon" src="../assets/up_load.png" alt="" srcset="">
-            <div class="upload_text">将文件拖到此处，或<em>点击上传</em></div>
-        </div>
-        <div class="upload" v-else>
-             <img class="upload_icon" src="../assets/add.png" alt="" srcset="">
-        </div>
-
-    </div>
-</template>
 <script>
     import SparkMD5 from 'spark-md5';
     export default {
@@ -32,7 +19,7 @@
             */
             hashType:{
                 type: Number,
-                default: 0
+                default: 1
             },
         },
         data () {
@@ -175,6 +162,19 @@
         }
     }
 </script>
+<template>
+    <div class="upload_content" @click="$refs.fileRef.click()">
+        <input type="file" ref="fileRef" class="upload_file" @change="handleFileChange">
+        <div class="dragger" v-if="drag" ref="dragRef">
+            <img class="upload_icon" src="../assets/up_load.png" alt="" srcset="">
+            <div class="upload_text">将文件拖到此处，或<em>点击上传</em></div>
+        </div>
+        <div class="upload" v-else>
+             <img class="upload_icon" src="../assets/add.png" alt="" srcset="">
+        </div>
+
+    </div>
+</template>
 <style lang="scss" scoped>
 .upload_content{
     display: inline-block;
