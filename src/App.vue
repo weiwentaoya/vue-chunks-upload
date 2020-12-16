@@ -1,16 +1,14 @@
 <template>
   <div>
-    {{initData}}
-    <ChunksUpload :propData='initData'/>
+    <ChunksUpload drag/>
   </div>
 </template>
 
 <script>
-import ChunksUpload from '../components/chunksUpload.vue'
+import ChunksUpload from '../packages/chunksUpload.vue'
 export default {
     data(){
       return {
-        initData: 'hello 你好'
       }
     },
     components:{

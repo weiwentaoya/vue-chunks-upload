@@ -1,2 +1,2 @@
-import chunksUpload from "./components/chunksUpload.vue"
+import chunksUpload from "./packages/chunksUpload.vue"
 export default chunksUpload
