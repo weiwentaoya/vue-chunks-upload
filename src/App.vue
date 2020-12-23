@@ -3,13 +3,13 @@
     <ChunksUpload
      :onUploadProgress="onUploadProgress"
      :onUploadSuccess="onUploadSuccess"
-     checkFileUrl="/checkFile"
-     uploadFileUrl="/uploadFile"
-     merageFileUrl="/merageFile"
+     checkFileUrl="http://localhost:3000/api/checkFile"
+     uploadFileUrl="http://localhost:3000/api/uploadFile"
+     merageFileUrl="http://localhost:3000/api/merageFile"
      :chunkSize="102400"
      />
      <div>
-      <img :src="imageUrl" alt="" srcset="">
+      {{Url}}
      </div>
   </div>
 </template>
@@ -19,7 +19,7 @@ import ChunksUpload from '../packages/chunksUpload.vue'
 export default {
     data(){
       return {
-        imageUrl:''
+        Url:''
       }
     },
     components:{
@@ -30,7 +30,7 @@ export default {
         // console.log('progress;', progress);
       },
       onUploadSuccess(path){
-        this.imageUrl = path
+        this.Url = path
         console.log(path);
       }
     }

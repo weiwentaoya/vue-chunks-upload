@@ -13,10 +13,10 @@ app.use(static(__dirname+'/public'));
 app.use(koaBody({
     multipart: true,
     formidable: {
-      maxFileSize: 20000 * 1024 * 1024 // 设置上传文件大小最大限制，默认2M
+      maxFileSize: 20000 * 1024 * 1024 
     }
 }))
-
+router.get('')
 router.post('/api/checkFile',async (ctx, next)=>{
         const {hash } = ctx.request.body
         let chunks=[]
@@ -31,10 +31,12 @@ router.post('/api/checkFile',async (ctx, next)=>{
    
 })
 router.post('/api/uploadFile', (ctx, next)=>{
-    const rd = parseInt(Math.random()*10)
-    if (rd<2) {
-        ctx.response.status = 500
-    }
+
+    // 这里用伪代码假装后台报错，
+    // const rd = parseInt(Math.random()*10)
+    // if (rd<1) {
+    //     ctx.response.status = 500
+    // }
     const {index, hash, name} = ctx.request.body
     if (!fs.existsSync(`./public/${hash}`)) {
         fs.mkdirSync(`./public/${hash}`);
@@ -97,4 +99,6 @@ router.post('/api/merageFile',async (ctx, next)=>{
 
 app.use(bodyParser())
 app.use(router.routes());
-app.listen(3000,()=>{});
+app.listen(3000,()=>{
+    console.log('http://localhost:3000/ ')
+});

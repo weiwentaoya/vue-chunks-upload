@@ -67,6 +67,7 @@ or import locally
 | merageFileUrl    | string   | true     |         | 合并切片地址                                                 |
 | onUploadProgress | function | true     |         | 获取上传进度方法                                             |
 | onUploadSuccess  | function | true     |         | 上传成功获取上传地址方法                                     |
+| onUploadError    | function | false     |         | 上传失败方法  
 | limit            | number   | false    | 3       | 控制上传并发数量(一次发送几个请求)                           |
 | hashType         | number   | false    | 0       | 区分计算hash的方法。0：利用布隆过滤器方式计算，1:通过子线程worker计算2:通过浏览器的空闲时段计算（requestIdleCallback） |
 | chunkSize        | number   | false    | 102400  | 每个文件切片大小（建议为整数）                               |

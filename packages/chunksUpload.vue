@@ -1,4 +1,11 @@
 <script>
+    import axios from 'axios';
+    const SERVER = axios.create()
+    SERVER.interceptors.response.use(
+        response=>{
+            return response.data
+        }
+    )
     import SparkMD5 from 'spark-md5';
     export default {
         name:'helloName',
@@ -46,6 +53,10 @@
                 type: Function,
                 required: true
             },
+            // 上传失败获取上传地址
+            onUploadError:{
+                type: Function,
+            },
             // 上传并发数量
             limit:{
                 type: Number,
@@ -56,7 +67,7 @@
             return {
                 file: null,
                 chunks: [],
-                hash:'1'
+                hash:''
             }
         },
         mounted(){
@@ -110,7 +121,7 @@
                 this.chunks.forEach((el,index)=>{
                     el.name = `${this.hash}-${index}`
                 })
-                this.$http.post(this.checkFileUrl, {hash:this.hash} ).then(res=>{
+                SERVER.post(this.checkFileUrl, {hash:this.hash} ).then(res=>{
                     if (res.code == 0) {
                         this.chunks.forEach((el,index)=>{
                             if (res.chunks.indexOf(el.name) > -1) {
@@ -139,7 +150,7 @@
                     form.progress = el.progress
                     return form
                     // return new Promise(resolve=>{
-                    //     this.$http.post(
+                    //     SERVER.post(
                     //         this.uploadFileUrl, form,
                     //         {
                     //             onUploadProgress:  (Event)=>{
@@ -154,6 +165,9 @@
                 }).filter(el=>el.progress<100)
                 this.sendRequest(chunkForms).then(res=>{
                     this.merageFile()
+                }).catch(()=>{
+                    console.log('上传错误')
+                    this.onUploadError&&this.onUploadError('上传错误')
                 })
                 // Promise.all(asyncFun).then(res=>{
                 //     this.merageFile()
@@ -161,6 +175,7 @@
                 
             },
             sendRequest(chunkForms){
+                let lock = true
                 // limit
                 const length =  chunkForms.length
                 return new Promise((resolve, reject)=>{
@@ -171,8 +186,15 @@
                     let count = 0
                     const start = ()=>{
                         const form =  chunkForms.shift()
+                        if (form.error>=3) {
+                            lock = false
+                        }
                         if (!form) return
-                        this.$http.post(
+                        if(!lock){
+                             reject()
+                             return
+                        }
+                        SERVER.post(
                             this.uploadFileUrl, form,
                             {
                                 onUploadProgress:  (Event)=>{
@@ -208,7 +230,7 @@
                 })
             },
             merageFile(){
-                this.$http.post(this.merageFileUrl, 
+                SERVER.post(this.merageFileUrl, 
                 {
                     hash:this.hash,
                     size: this.chunkSize,
