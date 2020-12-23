@@ -8,7 +8,6 @@ const fs = require("fs")
 const app = new Koa();
 const router = new Router();
 const cors = require('koa2-cors');
-const { resolve } = require('path');
 app.use(cors());
 app.use(static(__dirname+'/public'));
 app.use(koaBody({
@@ -20,48 +19,49 @@ app.use(koaBody({
 
 router.post('/api/checkFile',async (ctx, next)=>{
         const {hash } = ctx.request.body
-        const chunks=[]
-        if (fs.existsSync(`./public/${hash}`)){
-            const files = fs.readdirSync(`./public/${hash}`)
-            ctx.response.body ={
-                code : 0,
-                files
-            }
+        let chunks=[]
+        if (await fs.existsSync(`./public/${hash}`)){
+            // 获取到已上传的chunk切片，返回
+            chunks =await fs.readdirSync(`./public/${hash}`)
         }
-        resolve(
-            ctx.response.body ={
-                code : 0,
-                chunks
-            }
-        )
-   
+        ctx.response.body ={
+            code : 0,
+            chunks
+        }
    
 })
-router.post('/api/uploadFile',async (ctx, next)=>{
-     const {index, hash, name} = ctx.request.body
+router.post('/api/uploadFile', (ctx, next)=>{
+    const rd = parseInt(Math.random()*10)
+    if (rd<2) {
+        ctx.response.status = 500
+    }
+    const {index, hash, name} = ctx.request.body
     if (!fs.existsSync(`./public/${hash}`)) {
         fs.mkdirSync(`./public/${hash}`);
     }
-    var stream = fs.createWriteStream(`./public/${hash}/${name}`);//创建一个可写流
-    fs.createReadStream(ctx.request.files.chunk.path).pipe(stream);//可读流通过管道写入可写流
+    // 保存文件chunk切片
+    var stream = fs.createWriteStream(`./public/${hash}/${name}`);
+    fs.createReadStream(ctx.request.files.chunk.path).pipe(stream);
     ctx.response.body ={
         code : 0,
     }
 })
 
-router.post('/api/merageFile', (ctx, next)=>{
+router.post('/api/merageFile',async (ctx, next)=>{
     if (!fs.existsSync(`./public/file`)) {
         fs.mkdirSync(`./public/file`);
     }
     const {hash, ext, size } = ctx.request.body
+    let filePath = ''
     if (fs.existsSync(`./public/${hash}`)) {
-        const files = fs.readdirSync(`./public/${hash}`)
+        const files =await fs.readdirSync(`./public/${hash}`)
+        // 控制读取到每一个文件切片（path） 流入到 可写流（WS）
         const pipStream=(path, WS,index)=>{
-            return new Promise(resolve=>{
+            return new Promise( resolve=>{
                 const RS = fs.createReadStream(path)
                 RS.pipe(WS);
                 RS.on('end',()=>{
-                    // fs.unlinkSync(path)
+                    fs.unlinkSync(path)
                     resolve(index)
                 })
             })
@@ -69,22 +69,26 @@ router.post('/api/merageFile', (ctx, next)=>{
         }
         const chunks = files.map(el=>{
             const index = el.split('-').pop()
-            return pipStream(`./public/${hash}/${el}`,fs.createWriteStream(`./public/file/${hash}.${ext}`,{
-                start:index *  size,
-                end:index *  size + size
-            }),index)
+            // 创建可写流，设置流入的位置（start，end）
+            const WS = fs.createWriteStream(`./public/file/${hash}.${ext}`,{
+                start:parseInt(index *  size),
+                end:parseInt(index *  size + size)
+            })
+            return pipStream(`./public/${hash}/${el}`, WS ,index)
                 
         })
-        Promise.all(chunks).then(res=>{
-            // fs.unlinkSync(`./public/${hash}`)
+        await Promise.all(chunks).then(res=>{
+            filePath = `http://localhost:3000/file/${hash}.${ext}`
         })
         ctx.response.body ={
             code : 0,
-            filePath: `http://localhost:3000/file/${hash}.${ext}`
+            filePath: filePath|| '',
+            message: filePath?'上传成功':'文件合并失败，请重新上传'
         }
     }else{
         ctx.response.body ={
             code : 0,
+            filePath:'',
             message: '文件合并失败，请重新上传'
         }
     }
@@ -93,8 +97,4 @@ router.post('/api/merageFile', (ctx, next)=>{
 
 app.use(bodyParser())
 app.use(router.routes());
-app.listen(3000,()=>{
-    
-});
-
-
+app.listen(3000,()=>{});

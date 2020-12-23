@@ -5,7 +5,7 @@ this.onmessage= e => {
     let count = 0 
     const fileReader = new FileReader()
     const loadNext=index=>{
-        fileReader.readAsArrayBuffer(chunks[index])
+        fileReader.readAsArrayBuffer(chunks[index].chunk)
         fileReader.onload=e=>{
             count++
             spark.append(e.target.result)
