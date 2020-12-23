@@ -1,7 +1,7 @@
 {
   "name": "vue-chunks-upload",
   "description": "vue大文件切片断点续传组件",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "weiwentao <17600626753@163.com>",
   "license": "ISC",
   "private": false,
