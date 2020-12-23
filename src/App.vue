@@ -1,7 +1,6 @@
 <template>
   <div>
     <ChunksUpload
-     drag
      :onUploadProgress="onUploadProgress"
      :onUploadSuccess="onUploadSuccess"
      checkFileUrl="/checkFile"

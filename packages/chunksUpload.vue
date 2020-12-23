@@ -15,8 +15,8 @@
             /*
             *  区分计算hash的方法
             *  1:通过子线程worker计算
-            *  2:通过浏览器的空闲时段计算，有兼容性 requestIdleCallback
-            *  3：利用布隆过滤器方式计算
+            *  2:通过浏览器的空闲时段计算requestIdleCallback
+            *  0：利用布隆过滤器方式计算
             */
             hashType:{
                 type: Number,
