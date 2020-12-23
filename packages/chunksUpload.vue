@@ -25,17 +25,17 @@
             // 检查已上传切片地址
             checkFileUrl:{
                 type: String,
-                default: ''
+                required: true
             },
             // 上传切片地址
             uploadFileUrl:{
                 type: String,
-                default: ''
+                required: true
             },
             // 合并切片地址
             merageFileUrl:{
                 type: String,
-                default: ''
+                required: true,
             },
             // 获取上传进度
             onUploadProgress:{
@@ -44,6 +44,7 @@
             // 上传成功获取上传地址
             onUploadSuccess:{
                 type: Function,
+                required: true
             },
             // 上传并发数量
             limit:{
