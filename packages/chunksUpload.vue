@@ -275,7 +275,6 @@
                                 window.requestIdleCallback(workLoop)
                             }
                         })
-                        
                     }
                     window.requestIdleCallback(workLoop)
 
